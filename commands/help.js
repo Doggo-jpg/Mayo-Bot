@@ -3,6 +3,7 @@ const { stringify } = require('querystring');
 
 module.exports = {
     name: 'help',
+    aliases:['h'],
     description: "ayuda a los ineptos a entender los comandos de este bot increiblemente sofisticado",
     execute(message,args,cmd,client,Discord){
 
@@ -12,7 +13,7 @@ module.exports = {
         for(const file of command_files){
             const command = require(`../commands/${file}`);
             if(command.name){
-                wrt += command.name +": "+ command.description + "\n";
+                wrt += "-"+command.name +": "+ command.description + "\n";
               
                 
                

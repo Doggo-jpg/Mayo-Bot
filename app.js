@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+require('dotenv').config();
 const client = new Discord.Client();
 
 
@@ -16,4 +17,4 @@ client.events = new Discord.Collection();
 
 
 //login the bot using token
-client.login("ODQ1MjAwMzMyMzIxNTg3MjQw.YKdgJg.XnMrSWOPxo8JdqdV4q2GUWXdoFs");
+client.login(process.env.DISCORD_TOKEN);

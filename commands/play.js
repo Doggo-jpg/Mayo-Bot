@@ -1,15 +1,13 @@
 const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
+const message = require('../Events/guild/message');
+const { VoiceConnection } = require('discord.js');
 
 const queue = new Map();
 
-
-
-
-
 module.exports = {
     name: 'play',
-    aliases: ['skip', 'stop'], //We are using aliases to run the skip and stop command follow this tutorial if lost: https://www.youtube.com/watch?v=QBUJ3cdofqc
+    aliases: ['p','skip', 'stop'], //We are using aliases to run the skip and stop command follow this tutorial if lost: https://www.youtube.com/watch?v=QBUJ3cdofqc
     cooldown: 0,
     description: 'busca musica de youtube',
     async execute(message,args, cmd, client, Discord){
@@ -27,6 +25,7 @@ module.exports = {
 
         //If the user has used the play command
         if (cmd === 'play'){
+            
             if (!args.length) return message.channel.send('faltan argumentos');
             let song = {};
 
@@ -49,9 +48,10 @@ module.exports = {
                 }
             }
 
+            
             //If the server queue does not exist (which doesn't for the first video queued) then create a constructor to be added to our global queue.
             if (!server_queue){
-
+               
                 const queue_constructor = {
                     voice_channel: voice_channel,
                     text_channel: message.channel,
@@ -67,15 +67,32 @@ module.exports = {
                 try {
                     const connection = await voice_channel.join();
                     queue_constructor.connection = connection;
-                    video_player(message.guild, queue_constructor.songs[0]);
+                    
+                    video_player(message.guild, queue_constructor.songs[0],Discord);
                 } catch (err) {
                     queue.delete(message.guild.id);
                     message.channel.send('valio verga la connexion');
                     throw err;
                 }
             } else{
+                
                 server_queue.songs.push(song);
+                //checks if the bot is connected to voice channel
+                if(server_queue && server_queue.connection.dispatcher ==null){
+                    try {
+                        
+                        const connection = await voice_channel.join();
+                        server_queue.connection = connection;
+                        
+                        video_player(message.guild, server_queue.songs[0],Discord);
+                    } catch (err) {
+                        queue.delete(message.guild.id);
+                        message.channel.send('valio verga la connexion');
+                        throw err;
+                    }
+                }
                 return message.channel.send(`**${song.title}** se añadio a la cola!`);
+                
             }
         }
 
@@ -86,77 +103,8 @@ module.exports = {
 }
 
 
-/*
-module.exports ={
-    name: 'play',
-    aliases: ['skip', 'stop'],
-    cooldown: 0,
-    description: 'busca musica de youtube',
-    async execute(message,args,cmd,client,Discord){
-        const voice_channel = message.member.voice.channel;
-        if(!voice_channel) return message.channel.send('metete a un canal de vos mamon');
-        const permissions = voice_channel.permissionsFor(message.client.user);
-        if(!permissions.has('CONNECT')) return message.channel.send('Tas bien puñetas, no tienes permisos pa hacer eso');
-        if(!permissions.has('SPEAK')) return message.channel.send('Tas bien puñetas, no tienes permisos pa hacer eso');
-
-        const server_queue = queue.get(message.guild.id);
-
-        if(cmd === 'play'){
-            if(!args.length) return message.channel.send('faltan argumentos');
-            let song = {};
-
-            if(ytdl.validateURL(args[0])){
-                const song_info = await ytdl.getInfo(args[0]);
-                song = {title: song_info.videoDetails.title, url: song_info.videoDetails.video_url}
-            }else{
-                const video_finder = async (query) =>{
-                    const videoResult = await ytSearch(query);
-                    return (videoResult.videos.length > 1) ? videoResult.videos[0]: null;
-                }
-
-                const video = await video_finder(args.join(' '));
-                if(video){
-                    song = {title: video.title, url: video.url }
-                }else{
-                    message.channel.send('No encontro el video');
-                }
-            }
-            
-            if(!server_queue){
-                const queue_constructor = {
-                    voice_channel: voice_channel,
-                    text_channel: message.channel,
-                    connection: null,
-                    songs: []
-                }
-
-                queue.set(message.guild.id, queue_constructor);
-                queue_constructor.songs.push(song);
-
-                try{
-                    const connection = await voice_channel.join;
-                    queue_constructor.connection = connection;
-                    video_player(message.guild, queue_constructor.songs[0]);
-                }catch(err){
-                    queue.delete(message.guild.id);
-                    message.channel.send('valio verga la conneccion');
-                    throw err;
-                }
-            }else{
-                server_queue.songs.push(song);
-                return message.channel.send(`se añadio **${song.title}** a la espera \n pura rola vergas`);
-            }
-        }
-
-
-    }
-
-
-}
-*/
-const video_player = async(guild, song) =>{
+const video_player = async(guild, song,Discord) =>{
     const song_queue = queue.get(guild.id);
-
     if(!song){
         song_queue.voice_channel.leave();
         queue.delete(guild.id);
@@ -165,11 +113,33 @@ const video_player = async(guild, song) =>{
     const stream = ytdl(song.url, { filter: 'audioonly'});
     song_queue.connection.play(stream, { seek: 0, volume: 0.5})
     .on('finish', () =>{
-        song_queue.song.shift();
-        video_player(guild, song_queue.songs[0]);
+        song_queue.songs.shift();
+        video_player(guild, song_queue.songs[0],Discord);
 
     });
-    await song_queue.text_channel.send(`Escuchando  **${song.title}**`);
+
+    //gets thumbnail image
+    let thumbnail =""
+    thumbnail += song.url
+    thumbnail = thumbnail.split("=").pop()
+    thumbnail = 'https://img.youtube.com/vi/'+thumbnail+'/default.jpg'
+
+
+    //creates embeded message
+    try {
+        const newembed = new Discord.MessageEmbed()
+    .setColor('#fd0404')
+    .setTitle(`Escuchando ${song.title}`)
+    .setURL(song.url)
+    .setDescription(`${song.title} es una cancion bien chingona alv`)
+    .setThumbnail(thumbnail)
+    await song_queue.text_channel.send(newembed);
+    } catch (error) {
+        console.log(error)
+    }
+    
+
+   
 }
 
 const skip_song =(message, server_queue) => {
@@ -177,10 +147,23 @@ const skip_song =(message, server_queue) => {
     if(!server_queue){
         return message.channel.send(`no hay rolas en la cola`);
     }
-    server_queue.connection.dispatcher.end();
+    if(server_queue.connection.dispatcher!=null){
+        server_queue.connection.dispatcher.end();
+    }else{
+        console.log(server_queue.connection.dispatcher)
+        message.channel.send('el bot no esta en ningun canal')
+
+    }
+    
 }
 const stop_song = (message, server_queue) =>{
     if(!message.member.voice.channel) return message.channel.send('necesitas estar en un canal de voz');
     server_queue.songs = [];
-    server_queue.connection.dispatcher.end();
+    if(server_queue.connection.dispatcher!=null){
+        server_queue.connection.dispatcher.end();
+        message.channel.send('la cola se ha eliminado')
+    }else{
+        console.log(server_queue.connection.dispatcher)
+        message.channel.send('la cola se ha eliminado')
+    }
 }
