@@ -1,10 +1,10 @@
 const Discord = require("discord.js");
 require('dotenv').config();
+const mongoose = require("mongoose");
 const client = new Discord.Client();
 
 
 const fs = require('fs');
-const { stringify } = require("querystring");
 
 
 client.commands = new Discord.Collection();
@@ -13,7 +13,15 @@ client.events = new Discord.Collection();
     require(`./handlers/${handler}`)(client,Discord);
 });
 
-
+mongoose.connect(process.env.MONGODB_SRV,{
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+    userFindAndModify:false
+}).then(()=>{
+    console.log("connected to the database")
+}).catch((err) =>{
+    console.log(err);
+});
 
 
 //login the bot using token
