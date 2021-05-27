@@ -1,7 +1,10 @@
 const Discord = require("discord.js");
 require('dotenv').config();
 const mongoose = require("mongoose");
+const keepAlive = require('./server')
 const client = new Discord.Client();
+
+
 
 
 const fs = require('fs');
@@ -13,7 +16,7 @@ client.events = new Discord.Collection();
     require(`./handlers/${handler}`)(client,Discord);
 });
 
-mongoose.connect(process.env.MONGODB_SRV,{
+mongoose.connect(process.env.MONGODB_SRV||"$MONGODB_SRV",{
     useNewUrlParser:true,
     useUnifiedTopology:true,
     userFindAndModify:false
@@ -23,6 +26,6 @@ mongoose.connect(process.env.MONGODB_SRV,{
     console.log(err);
 });
 
-
+keepAlive()
 //login the bot using token
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN||"$DISCORD_TOKEN");

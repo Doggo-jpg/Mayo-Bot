@@ -1,4 +1,3 @@
-const { aliases } = require("./play");
 
 module.exports ={
     name: "balance",

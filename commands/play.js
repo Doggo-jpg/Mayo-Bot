@@ -7,7 +7,7 @@ const queue = new Map();
 
 module.exports = {
     name: 'play',
-    aliases: ['p','skip', 'stop'], //We are using aliases to run the skip and stop command follow this tutorial if lost: https://www.youtube.com/watch?v=QBUJ3cdofqc
+    aliases: ['p','pl','skip', 'stop'], //We are using aliases to run the skip and stop command follow this tutorial if lost: https://www.youtube.com/watch?v=QBUJ3cdofqc
     cooldown: 0,
     description: 'busca musica de youtube',
     async execute(message,args, cmd, client, Discord){
@@ -24,7 +24,7 @@ module.exports = {
         const server_queue = queue.get(message.guild.id);
 
         //If the user has used the play command
-        if (cmd === 'play'){
+        if (cmd === 'play'||cmd ==='p'||cmd === 'pl'){
             
             if (!args.length) return message.channel.send('faltan argumentos');
             let song = {};
@@ -44,7 +44,7 @@ module.exports = {
                 if (video){
                     song = { title: video.title, url: video.url }
                 } else {
-                     message.channel.send('No se encontro el video');
+                     message.channel.send('No se encontro video');
                 }
             }
 
@@ -91,7 +91,24 @@ module.exports = {
                         throw err;
                     }
                 }
-                return message.channel.send(`**${song.title}** se añadio a la cola!`);
+                //gets thumbnail image
+                let thumbnail =""
+                thumbnail += song.url
+                thumbnail = thumbnail.split("=").pop()
+                thumbnail = 'https://img.youtube.com/vi/'+thumbnail+'/default.jpg'
+                try {
+                  const newembed = new Discord.MessageEmbed()
+                  .setColor('#fd0404')
+                  .setTitle(`${song.title} se agrego al culo`)
+                  .setURL(song.url)
+                  .setThumbnail(thumbnail)
+                   return message.channel.send(newembed);
+                } catch (error) {
+                  console.log(error)
+                  
+                }
+                  
+               
                 
             }
         }

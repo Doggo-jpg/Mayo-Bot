@@ -1,16 +1,23 @@
 require('dotenv').config
 const profileModel = require("..//../models/profileSchema");
+const fs = require('fs');
 
 module.exports = async(Discord, client, message) =>{
-    const prefix = process.env.PREFIX;
+  let prefix = '-';
 
+
+    let prefixes = JSON.parse(fs.readFileSync("./prefixes.json","utf8"))
+    if(prefixes[message.guild.id]){
+      prefix = prefixes[message.guild.id]
+      prefix = prefix.prefixes
+    }
+    console.log(prefix)
     client.user.setPresence({
         activity: {
             name: `${prefix}help`,
         }
     })
 
-    if(!message.content.startsWith(prefix) || message.author.bot) return;
 
     let profileData;
     try{
@@ -27,6 +34,10 @@ module.exports = async(Discord, client, message) =>{
     }catch(error){
         console.log(error);
     }
+
+    
+
+    if(!message.content.startsWith(prefix) || message.author.bot) return;
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const cmd = args.shift().toLowerCase();
