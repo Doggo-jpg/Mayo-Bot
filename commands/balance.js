@@ -2,8 +2,10 @@
 module.exports ={
     name: "balance",
     aliases: ["bal","bl"],
+    otherCommands:[],
     description: "revisa tu balance",
-    execute(message,args,cmd,client,Discord, profileData){
+    parameters:[],
+    execute(message,args,cmd,client,Discord,prefix,profileData){
         const username =message.author.tag
         const newEmbed = new Discord.MessageEmbed()
         .setColor('#00ffff')

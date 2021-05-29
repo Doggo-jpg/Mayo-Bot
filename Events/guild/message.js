@@ -6,12 +6,10 @@ module.exports = async(Discord, client, message) =>{
   let prefix = '-';
 
 
-    let prefixes = JSON.parse(fs.readFileSync("./prefixes.json","utf8"))
-    if(prefixes[message.guild.id]){
-      prefix = prefixes[message.guild.id]
-      prefix = prefix.prefixes
+    let config = JSON.parse(fs.readFileSync("./config.json","utf8"))
+    if(config[message.guild.id]){
+      prefix = config[message.guild.id].prefixes
     }
-    console.log(prefix)
     client.user.setPresence({
         activity: {
             name: `${prefix}help`,
@@ -41,12 +39,12 @@ module.exports = async(Discord, client, message) =>{
 
     const args = message.content.slice(prefix.length).split(/ +/);
     const cmd = args.shift().toLowerCase();
-    const command = client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd));
+    const command = client.commands.get(cmd) || client.commands.find(a => a.aliases && a.aliases.includes(cmd))|| client.commands.find(a => a.otherCommands && a.otherCommands.includes(cmd));
     
     // if the command exists executes command
     try {
         if(command){
-            command.execute(message,args,cmd,client,Discord, profileData);
+            command.execute(message,args,cmd,client,Discord,prefix,profileData);
             
             }
     } catch (error) {

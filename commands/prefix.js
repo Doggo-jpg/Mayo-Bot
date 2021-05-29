@@ -3,17 +3,19 @@ const fs = require('fs');
 module.exports = {
     name: 'prefix',
     aliases: [],
+    otherCommands:[],
     description: "cambia el comando del bot",
-    execute(message,args,cmd,client,Discord){
+    parameters:['<prefijo deseado>'],
+    execute(message,args,cmd,client,Discord,prefix,profileData){
       if(!message.member.hasPermission("MANAGE_SERVER")) return message.reply("No tienes permisos para administrar el server")
       if(!args[0] || args[0 == "help"]) return message.reply("Utilizacion: prefix <prefijo deseado>")
       
-      let prefixes = JSON.parse(fs.readFileSync("./prefixes.json",'utf8'));
+      let config = JSON.parse(fs.readFileSync("./config.json",'utf8'));
 
-      prefixes[message.guild.id] = {
+      config[message.guild.id] = {
         prefixes:args[0]
       };
-      fs.writeFile("./prefixes.json",JSON.stringify(prefixes), (err) =>{
+      fs.writeFile("./config.json",JSON.stringify(config), (err) =>{
         console.log(err);
       } );
 

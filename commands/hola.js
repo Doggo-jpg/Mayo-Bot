@@ -1,7 +1,10 @@
 module.exports = {
     name: 'hola',
+    aliases:[],
+    otherCommands:[],
     description: "saluda a la raza",
-    execute(message,args,cmd,client,Discord){
+    parameters:[],
+    execute(message,args,cmd,client,Discord,prefix,profileData){
 
         //check for role
         if(message.member.roles.cache.has('824746411999625276')){

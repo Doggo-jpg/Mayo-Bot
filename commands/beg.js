@@ -3,9 +3,11 @@ const profileModel = require('../models/profileSchema');
 module.exports ={
     name: "beg",
     aliases: [],
+    otherCommands:[],
     permisions:[],
     description: "pide monedas",
-    async execute(message,args,cmd,client,Discord, profileData){
+    parameters:[],
+    async execute(message,args,cmd,client,Discord,prefix,profileData){
         const begAction = ["chupo pito","dio las nalgas","golpeo tortugas","hizo un favor","mato un vagabundo","salio con su sugar daddy"];
         const ranbeg = Math.floor(Math.random() * 5);
         const randomNum = Math.floor(Math.random() * 500) + 1;

@@ -7,10 +7,12 @@ const queue = new Map();
 
 module.exports = {
     name: 'play',
-    aliases: ['p','pl','skip', 'stop'], //We are using aliases to run the skip and stop command follow this tutorial if lost: https://www.youtube.com/watch?v=QBUJ3cdofqc
+    aliases: ['p','pl','skip', 'stop'],
+    otherCommands:['skip', 'stop'],
+    parameters:['<url | nombre de video>'],
     cooldown: 0,
-    description: 'busca musica de youtube',
-    async execute(message,args, cmd, client, Discord){
+    description: 'busca musica de youtube\ncontroles:`skip`,`stop`',
+    async execute(message,args,cmd,client,Discord,prefix,profileData){
 
 
         //Checking for the voicechannel and permissions (you can add more permissions if you like).

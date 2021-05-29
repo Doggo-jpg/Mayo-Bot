@@ -1,0 +1,5 @@
+ if(message.member.voice.channel) {
+            client.discordTogether.createTogetherCode(message.member.voice.channelID, 'poker').then(async invite => {
+                return message.channel.send(`${invite.code}`);
+            });
+        };
