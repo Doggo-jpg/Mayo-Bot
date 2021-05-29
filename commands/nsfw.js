@@ -2,6 +2,7 @@ const NSFW = require("discord-nsfw");
 const fetch = require("node-fetch");
 const nsfw = new NSFW();
 module.exports = {
+    tag:"nsfw",
     name: 'nsfw',
     aliases: [],
     otherCommands:['hass','hmidriff','pgif','4k','hentai','holo','neko','hkitsune','kemonomimi','anal','hanal','gonewild','kanna','ass','pussy','thigh','hthigh','gah','coffee','food','paizuri','tentacle','boobs','hboobs','yaoi'],

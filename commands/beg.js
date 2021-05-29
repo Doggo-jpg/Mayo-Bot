@@ -1,6 +1,7 @@
 const profileModel = require('../models/profileSchema');
 
 module.exports ={
+    tag:"economy",
     name: "beg",
     aliases: [],
     otherCommands:[],

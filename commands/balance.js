@@ -1,5 +1,6 @@
 
 module.exports ={
+    tag:"economy",
     name: "balance",
     aliases: ["bal","bl"],
     otherCommands:[],

@@ -1,6 +1,7 @@
 const spanishmemes = require('spanish.memes');
 
 module.exports = {
+    tag:"fun",
     name: 'meme',
     aliases: [],
     otherCommands:[],

@@ -1,4 +1,5 @@
 module.exports = {
+    tag:"admin",
     name: 'everyone',
     aliases:[],
     otherCommands:[],

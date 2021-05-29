@@ -2,6 +2,7 @@
 const fs = require('fs');
 
 module.exports = {
+    tag:"config",
     name: 'rr',
     aliases: ['rrtitle'],
     otherCommands:[],

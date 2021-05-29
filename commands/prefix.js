@@ -1,6 +1,7 @@
 
 const fs = require('fs');
 module.exports = {
+    tag:"config",
     name: 'prefix',
     aliases: [],
     otherCommands:[],

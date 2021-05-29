@@ -1,4 +1,5 @@
 module.exports = {
+    tag:"fun",
     name: 'hola',
     aliases:[],
     otherCommands:[],

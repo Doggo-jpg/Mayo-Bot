@@ -6,6 +6,7 @@ const { VoiceConnection } = require('discord.js');
 const queue = new Map();
 
 module.exports = {
+    tag:"musica",
     name: 'play',
     aliases: ['p','pl','skip', 'stop'],
     otherCommands:['skip', 'stop'],

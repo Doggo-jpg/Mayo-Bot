@@ -2,6 +2,7 @@
 const { DiscordTogether } = require('discord-together');
 
 module.exports = {
+    tag:"fun",
     name: 'together',
     aliases:[],
     otherCommands:[],
