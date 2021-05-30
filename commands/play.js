@@ -15,7 +15,11 @@ module.exports = {
     description: 'busca musica de youtube\ncontroles:`skip`,`stop`',
     async execute(message,args,cmd,client,Discord,prefix,profileData){
 
-
+        const emoji1 = '1️⃣'
+        const emoji2 = '2️⃣'
+        const emoji3 = '3️⃣'
+        const emoji4 = '4️⃣'
+        const emoji5 = '5️⃣'
         //Checking for the voicechannel and permissions (you can add more permissions if you like).
         const voice_channel = message.member.voice.channel;
         if (!voice_channel) return message.channel.send('metete a un canal de voz mamon');
@@ -31,6 +35,7 @@ module.exports = {
             
             if (!args.length) return message.channel.send('faltan argumentos');
             let song = {};
+            let search=[]
 
             //If the first argument is a link. Set the song object to have two keys. Title and URl.
             if (ytdl.validateURL(args[0])) {
@@ -40,21 +45,63 @@ module.exports = {
                 //If there was no link, we use keywords to search for a video. Set the song object to have two keys. Title and URl.
                 const video_finder = async (query) =>{
                     const video_result = await ytSearch(query);
-                    return (video_result.videos.length > 1) ? video_result.videos[0] : null;
+                    return video_result.videos
+                    //return (video_result.videos.length > 1) ? video_result.videos[0] : null;
+                }
+                const choose_video = async (videos,msg) =>{
+                  client.on('messageReactionAdd', async (reaction,user)=>{
+                    if(reaction.message.partial) await reaction.message.fetch();
+                    if(reaction.partial) await reaction.message.fetch();
+                    if(user.bot) return;
+                    if(!reaction.message.guild) return;
+                    if(reaction.message.id != msg.id) return;
+                    if(reaction.emoji.name === emoji1){
+                      song = { title: videos[0].title, url: videos[0].url }
+                      song_play(song)
+                    }
+                    if(reaction.emoji.name === emoji2){
+                      song = { title: videos[1].title, url: videos[1].url }
+                      song_play(song)
+                    }
+                    if(reaction.emoji.name === emoji3){
+                      song = { title: videos[2].title, url: videos[2].url }
+                      song_play(song)
+                    }
+                    if(reaction.emoji.name === emoji4){
+                      song = { title: videos[3].title, url: videos[3].url }
+                      song_play(song)
+                    }
+                    if(reaction.emoji.name === emoji5){
+                      song = { title: videos[4].title, url: videos[4].url }
+                      song_play(song)
+                    }
+
+                    });
+                    //return videos[0]
                 }
 
-                const video = await video_finder(args.join(' '));
-                if (video){
-                    song = { title: video.title, url: video.url }
-                } else {
-                     message.channel.send('No se encontro video');
-                }
+
+                const search = await video_finder(args.join(' '));
+                let vembed = new Discord.MessageEmbed()
+                .setTitle("Resultados de la Busqueda")
+                .setColor("#fd0404")
+                .setDescription(`1: ${search[0].title}\n2: ${search[1].title}\n3: ${search[2].title}\n4: ${search[3].title}\n5: ${search[4].title}\n`)
+                let membed = await message.channel.send(vembed);
+                membed.react(emoji1)
+                membed.react(emoji2)
+                membed.react(emoji3)
+                membed.react(emoji4)
+                membed.react(emoji5)
+                const video = await choose_video(search,membed);
+                
             }
 
             
             //If the server queue does not exist (which doesn't for the first video queued) then create a constructor to be added to our global queue.
+            const song_play = async(song)=>{
+              
             if (!server_queue){
-               
+               console.log(server_queue);
                 const queue_constructor = {
                     voice_channel: voice_channel,
                     text_channel: message.channel,
@@ -78,7 +125,7 @@ module.exports = {
                     throw err;
                 }
             } else{
-                
+                console.log(server_queue)
                 server_queue.songs.push(song);
                 //checks if the bot is connected to voice channel
                 if(server_queue && server_queue.connection.dispatcher ==null){
@@ -114,6 +161,7 @@ module.exports = {
                
                 
             }
+            }
         }
 
         else if(cmd === 'skip') skip_song(message, server_queue);
@@ -121,7 +169,6 @@ module.exports = {
     }
     
 }
-
 
 const video_player = async(guild, song,Discord) =>{
     const song_queue = queue.get(guild.id);

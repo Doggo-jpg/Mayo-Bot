@@ -12,7 +12,7 @@ module.exports = async(Discord, client, message) =>{
     }
     client.user.setPresence({
         activity: {
-            name: `${prefix}help`,
+            name: `-help`,
         }
     })
 

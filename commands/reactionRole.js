@@ -4,10 +4,10 @@ const fs = require('fs');
 module.exports = {
     tag:"config",
     name: 'rr',
-    aliases: ['rrtitle'],
-    otherCommands:[],
+    aliases: [],
+    otherCommands:['rrtitle'],
     description: "[WIP] agrega un role mediante una reaccion",
-    parameters:[],
+    parameters:["<canal> | <Title> | <Descripcion> | rol |reaccion"],
     async execute(message,args,cmd,client,Discord,prefix,profileData){
       const channelID = message.mentions.channels.first();
       //if(!channelID) return message.reply("Necesita espesificar un canal de texto")

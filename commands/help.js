@@ -12,6 +12,7 @@ module.exports = {
          let hembed = new Discord.MessageEmbed();
         const command_files = fs.readdirSync('./commands/').filter(file => file.endsWith('.js'));
         let command;
+
         if(args.length>0){
           console.log(command_files)
           try{
@@ -20,8 +21,20 @@ module.exports = {
           }catch(err){
             console.log("AASSSSSSSSSSSSSSSSSSSSSSSSSS:"+err)
           }
+
           if(command==null) return message.reply("ese no es un comando de mayobot o no tiene ayuda intenta con otro comando\nhelp <comando>")
-          hembed.setTitle(command.name);
+          let title =command.name+" ||";
+
+          if(command.aliases.length>0){
+            for(let i=0;i<command.aliases.length;i++){ 
+            title +=command.aliases+" ";
+            }
+          } 
+          if(command.parameters.length>0){
+            
+            title += command.parameters;
+          }
+          hembed.setTitle(title);
           hembed.setColor('RANDOM');
           hembed.setDescription(command.description);
 
@@ -34,56 +47,58 @@ module.exports = {
           for(const file of command_files){
               const command = require(`../commands/${file}`);
               commandArray.push(command)
-              let tag = command.tag
-              if(command.name){
-
-                  let com ="`"+command.name+"`"
-                  
-                  for(let i =0;i<command.otherCommands.length;i++){
-                    com +=", `"+command.otherCommands[i]+"`"
-                  }
-                  console.log(tag+" "+com)
-                  //hembed.addField(tag,com)
-              } else{
-                  continue;
-              }
+              
             
           }
-          let elimtags = commandArray
           let tagArray = []
           let count =0
-          while(count<elimtags.length){
-            let tag = elimtags[count].tag;
-            let comandsleft = elimtags.length 
-            let com;
-            for(let i = count;i<comandsleft; i++){
-              console.log("A")
-              if(elimtags[i].tag == tag){
-                com ="`"+elimtags[i].name+"`"
+          let tagCount = 0;
 
-                if(elimtags[i].otherCommands.length > 0){
-                  for(let j =0;j< elimtags[i].otherCommands.length;j++){
-                  com +=", `"+elimtags[i].otherCommands[j]+"`"
+          while(count<commandArray.length){
+            //console.log(count+":tagcount "+tagCount)
+
+            let tag ="";
+            let comandsleft = commandArray.length 
+            let com ="";
+
+              if(commandArray[tagCount]){ 
+                tag = commandArray[tagCount].tag;
+                for(let i = 0;i<comandsleft; i++){
+                let theTag =commandArray[i]
+
+                if( theTag!=null){
+
+                  if(commandArray[i].tag == tag){
+                    //console.log(commandArray[i].name+" is "+tag)
+                    com +="`"+commandArray[i].name+"` "
+
+                    if(commandArray[i].otherCommands.length > 0){
+                      for(let j =0;j< commandArray[i].otherCommands.length;j++){
+                        com +=", `"+commandArray[i].otherCommands[j]+"`"
+                      }
+                    
+                    }  
+                    
+                    //console.log("deleted: "+commandArray[i].name)
+                    delete commandArray[i]
+                    
+                    count++;
+                    i--;
+                    
                   }
-                
-                }  
-                delete elimtags[i]
-                count++
-                comandsleft--;
-                
-                
-                
+                }
               }
-              
             }
-            hembed.addField(tag,com)
+            tagCount++;
+
+            if(tag.length>0 && com.length>0){
+              hembed.addField(tag,com)
+            }
 
             
           }
 
         }
-        
-       
         
 
         message.channel.send(hembed);
