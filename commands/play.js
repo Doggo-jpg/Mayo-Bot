@@ -14,7 +14,7 @@ module.exports = {
     cooldown: 0,
     description: 'busca musica de youtube\ncontroles:`skip`,`stop`',
     async execute(message,args,cmd,client,Discord,prefix,profileData){
-
+        let param = message.content.slice("|")
         const emoji1 = '1️⃣'
         const emoji2 = '2️⃣'
         const emoji3 = '3️⃣'
